@@ -103,16 +103,12 @@ void setup() {
   rtc.adjust(DateTime(eastern));
   if (! rtc.initialized() || rtc.lostPower()) {
     Serial.println("RTC is NOT initialized, let's set the time!");
-     uint32_t eastern = getEpoch(false);
-    
-     Serial.println("epoch eastern");
-     Serial.println(eastern);
-      rtc.adjust(DateTime(eastern));
+    syncRTCWithNTP(false);
   }
     rtc.start();
 
 }
-
+bool SYNCED = true;
 void loop() {
  currentMillis = millis();
   if(abs(millis()) < timegoal){
@@ -122,12 +118,20 @@ void loop() {
       // Write to LEDS
       // Sync NTP to RTC
       digitalWrite(LED_BUILTIN, HIGH);
-       getEpoch(
        getTime();
+       SYNCED = false;
 
   }
   else{
+          
           digitalWrite(ledPin, LOW);
+          if(SYNCED == false){
+              syncRTCWithNTP(false);
+          Serial.println("SYNCED");
+
+          }
+          SYNCED = true;
+
 
   }
   //Serial.println("Doing other thing");
@@ -230,7 +234,10 @@ uint32_t getEpoch(bool GMT){
   // wait ten seconds before asking for the time again
 } 
 
-syncRTCWithNTP
+void syncRTCWithNTP(bool TimeZoneValue){
+  uint32_t eastern = getEpoch(TimeZoneValue);
+  rtc.adjust(DateTime(eastern));
+}
 
 // send an NTP request to the time server at the given address
 void sendNTPpacket(const char * address) {

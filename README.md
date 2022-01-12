@@ -1,2 +1,2 @@
 # TimeBasedTemperatureStairs
-Stairs controlled. RB PI 2 
+Stairs controlled.
